@@ -1,0 +1,14 @@
+{
+  "name": "personal-libray",
+  "version": "1.0.0",
+  "description": "a personal libray",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "practise"
+  ],
+  "author": "xht",
+  "license": "MIT"
+}
