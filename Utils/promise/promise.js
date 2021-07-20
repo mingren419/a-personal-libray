@@ -128,4 +128,8 @@ Promise.all = function(arr) {
   });
 };
 
+Promise.resolve = function(res) {
+  return new Promise(function() {});
+};
+
 module.exports = Promise;
