@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 优先级队列
+    function PriorityQueue() {
+      // 内部类，优先级队列元素的构造器
+      function QueueElement(element, priority) {
+        this.element = element;
+        this.priority = priority;
+      }
+      this.items = [];
+
+      // 添加元素enqueue
+      PriorityQueue.prototype.enqueue = function (element, priority) {
+        // 创建队列元素对象
+        const queueElement = new QueueElement(element, priority);
+        if (this.isEmpty()) {
+          this.items.push(queueElement);
+        } else {
+          const len = this.size();
+          // 找到正确位置标识
+          let added = false;
+          for (let i = 0; i < len; i++) {
+            if (priority < this.items[i].priority) {
+              // 从优先级最高（priority值最小的，也就是数组第一项开始查找），如果新元素的优先级 高于 某个位置的元素，直接插入该位置
+              this.items.splice(i, 0, queueElement)
+              added = true;
+              break;
+            }
+          }
+          if (!added) {
+            // 没有找到位置（即优先级最低，priority值最大），添加到最后
+            this.items.push(queueElement);
+          }
+        }
+      }
+
+      // 删除元素 dequeue
+      PriorityQueue.prototype.dequeue = function () {
+        return this.items.shift()
+      }
+
+      // 返回优先级最高的第一个元素front
+      PriorityQueue.prototype.front = function () {
+        return this.items[0]
+      }
+
+
+      PriorityQueue.prototype.size = function () {
+        return this.items.length;
+      }
+
+      PriorityQueue.prototype.isEmpty = function () {
+        return this.items.length === 0;
+      }
+
+      PriorityQueue.prototype.toString = function () {
+        let str = '';
+        for (let i = 0; i < this.size(); i++) {
+          str += this.items[i].element + '-' + this.items[i].priority + ' ';
+        }
+        return str;
+      }
+    }
+    const priorityQueue = new PriorityQueue;
+    priorityQueue.enqueue('nba', 10)
+    priorityQueue.enqueue('cba', 40)
+    priorityQueue.enqueue('uba', 30)
+    priorityQueue.enqueue('dba', 5)
+    console.log('priorityQueue', priorityQueue.toString());
+  </script>
+</body>
+
+</html>

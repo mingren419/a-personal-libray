@@ -17,3 +17,15 @@
 // 1.如果Call Stack 为空（同步代码执行完毕），Event Loop 开始工作
 // 2.轮询查找 Callback Queue,如有任务，则放到Call Stack 中执行
 // 3.继续轮询，像永动机一样
+
+// 宏任务 macroTask: setTimeout,setInterval,Ajax,Dom事件
+// 微任务microTask: Promise, async/await
+// 微任务执行早于宏任务
+
+// event loop 和 DOM渲染
+// 微任务 先于 DOM渲染 先于 宏任务
+
+// 微任务是es6语法定义的（微任务有微任务队列,微任务等待时机会被推到micro task queue微任务队列），宏任务是浏览器定义的（宏任务等待时机会由web APIs内推到Callback queue）
+
+// 整个执行的机制概括为
+// 同步代码执行完毕，Call Stack清空，执行微任务，尝试dom渲染，触发event loop 执行宏任务

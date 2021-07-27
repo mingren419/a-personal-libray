@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  序：<br />
+  数组是一种线性结构，而且可以在任意位置插入和删除元素；<br />
+  但某些时候，必须对 ‘任意性’ 加以限制，而栈和队列 就是比较常见的 受限的线性结构<br />
+  <hr>
+  生活中的栈结构： 托盘，信箱（程序是对生活的一种抽象）<br />
+  <hr>
+  程序中的栈的使用<br />
+  函数的调用栈： 函数直接相互调用 A调用B，B调用C，C调用D<br />
+  1.执行过程，先将A函数压入栈，A函数没有执行完，所以不会弹出栈<br />
+  2.A函数在执行的过程中调用了B函数，此时将B函数压入栈，B在栈顶，A在栈底<br />
+  3.依此。。。<br />
+  4.栈底A-B-C-D栈顶，D执行完，弹出栈，然后是C函数。。。。依此弹出栈<br />
+  5.所以有函数调用栈的说法，源于内部的实现机制依靠栈结构<br />
+  <hr>
+  <hr>
+  名词：<br />
+  进栈（入栈/压栈），出栈（退栈），栈顶，栈底<br />
+  <hr>
+  特点： 后进先出（LIFO） last in first out<br />
+  <hr>
+  面试题：<br />
+  有6个元素6，5，4，3，2，1 依次进栈，哪一个不是合法的出栈顺序（c）<br />
+  A.543612 B.453216 c.346521 d.234156<br />
+  <hr>
+  栈结构的实现<br />
+  1.使用数组 2.使用链表<br />
+  <hr>
+  栈的常见操作：<br />
+  1.push(element):添加一个新元素到栈顶的位置<br />
+  2.pop(): 移除栈顶的元素，同时返回被移除的元素<br />
+  3.peek(): 返回栈顶的元素（仅仅返回，不删除）<br />
+  4.isEmpty(): 判断栈是否为空（栈内是否有元素存在），return Boolean；<br />
+  5.size(): 返回栈中元素的个数；<br />
+  6.toString(): 将栈结构的内容以字符串的形势返回<br />
+
+  <script>
+    // 封装栈类
+    function Stack() {
+      this.items = [];
+      // 栈的操作
+      // push
+      // pop
+      // peek
+      // isEmpty
+      // size
+      // toString
+    }
+
+    Stack.prototype = {
+      push(element) {
+        this.items.push(element)
+      },
+      pop() {
+        return this.items.pop();
+      },
+      peek() {
+        return this.items[this.size() - 1];
+      },
+      size() {
+        return this.items.length;
+      },
+      isEmpty() {
+        return this.size() === 0;
+      },
+      toString() {
+        const len = this.size();
+        let str = '';
+        for (let i = 0; i < len; i++) {
+          // if (!i) {
+          //   str += this.items[i];
+          // } else {
+          //   str += ',' + this.items[i];
+          // }
+          str = `${str}${i ? ',' : ''}${this.items[i]}`
+        }
+        return str;
+      }
+    }
+
+    //栈的使用
+    const s = new Stack();
+
+    console.log(s.toString());
+    s.push(1);
+    s.push(2);
+    s.push(3);
+    s.push(4);
+    console.log(s.toString());
+
+    console.log('peek', s.peek());
+    console.log('pop', s.pop());
+    console.log('size', s.size());
+
+    console.log('isEmpty', s.isEmpty());
+
+    // 应用：10进制转成2进制
+    // 例如：100 转成2进制 
+    // 步骤：
+    // 100 / 2 余： 0
+    // 50 / 2 余： 0
+    // 25 / 2 余： 1
+    // 12 / 2 余： 0
+    // 6 / 2 余： 0
+    // 3 / 2 余： 0
+    // 1 / 2 余：1
+    // 1100100  , 就是一个通过比较上次结果与2的比值取整数（只要>0,就继续比值），将余数压入栈，最后弹出余数组合起来就是最终结果
+    function dec2bin(target) {
+      const stack = new Stack();
+      // 压栈的过程
+      while (target > 0) {
+        // 获取余数放入栈中
+        stack.push(target % 2);
+        // 获取整除后的结果用于下次运算
+        target = Math.floor(target / 2); // 整数结果参与下次计算，结果为0，表示终止
+      }
+      // 出栈的过程(从栈中取出0 和 1)
+      let binaryString = '';
+      while (!stack.isEmpty()) {
+        binaryString += stack.pop();
+      }
+      return binaryString; // 1100100
+    }
+    console.log(dec2bin(100));
+  </script>
+</body>
+
+</html>

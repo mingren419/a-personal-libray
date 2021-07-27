@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>单项列表</title>
+  <style>
+    p {
+      text-indent: 2rem;
+      line-height: 48px;
+      border-bottom: 1px dashed #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>链表及数组</h2>
+  <p>1.链表和数组一样，可以用于存储一系列的元素，但是链表和数组的实现机制完全不同</p>
+
+  <h3>数组的优点：</h3>
+  <p>
+    1.数组通过下标值去获取和修改数据的时候，性能会特别高
+  </p>
+
+  <h3>数组的缺点:</h3>
+  <p>
+    1.数组在创建的时候通常会申请一段连续的内存空间（一整块的内存），并且大小是固定的（大多数编程语言数组都是固定的），所以当数组不能够满足容量需求时，通常需要扩容。（一般情况下需要申请一个更大容量的数组，比如2倍。把之前的数组元素复制过去）
+  </p>
+  <p>
+    2.在数组的开头或者中间位置插入元素的成本很高，需要进行大量元素的位移（尽管js中Array类的方法可以帮助我们做这些事，但是背后的原理都是一样的）
+  </p>
+
+  <h3>链表的优点（相对数组）</h3>
+  <p>
+    1.内存空间不必是连续的，可以充分利用计算机的内存，实现灵活的内存动态管理
+  </p>
+  <p>
+    2.链表不必在创建时就知道大小，而且大小可以无限延伸下去；
+  </p>
+  <p>
+    3.链表在插入和删除数据的时候，时间复杂度是O（1），相对数组效率高很多
+  </p>
+
+  <h3>链表的缺点：</h3>
+  <p>链表访问任何一个元素，必须从头开始访问（无法跳过某个元素去访问下一个元素）</p>
+  <p>即使已给下标值，也是需要从头开始访问，直到找到相应元素</p>
+
+
+  <h3>链表的特点：</h3>
+  <p>1.要存储多个元素，另外一个选择就是链表</p>
+  <p>2.但不同于数组，链表中的元素在内存中不必是连续的的空间</p>
+  <p>3.链表的每个元素由一个存储元素本身的节点和一个指向下一个元素的引用（有些语言称为指针或者连接）组成</p>
+  <script>
+    function LinkedList() {
+      function Node(data) {
+        this.data = data;
+        this.next = null;
+      }
+      this.head = null;
+      this.length = 0;
+      // append 向链表最后添加一个元素
+      LinkedList.prototype.append = function (element) {
+        //  创建新节点
+        const newNode = new Node(element);
+        if (!this.length) {
+          // 判断是否添加第一个元素
+          this.head = newNode;
+        } else {
+          let cur = this.head;
+          while (cur.next) {
+            cur = cur.next;
+          }
+          cur.next = newNode;
+        }
+        this.length += 1;
+      }
+
+      // toString;
+      LinkedList.prototype.toString = function () {
+        let cur = this.head;
+        let listRes = '';
+        while (cur) {
+          listRes += cur.data + ' ';
+          cur = cur.next;
+        }
+        return listRes;
+      }
+
+      // insert 
+      LinkedList.prototype.insert = function (position, data) {
+        // 越界判断
+        if (position < 0 || position > this.length) return false;
+        const newNode = new Node(data);
+        if (position === 0) {
+          // console.log('this', this)
+          // console.log('this', this.toString());
+          // 插入0的位置
+          newNode.next = this.head;
+          this.head = newNode;
+        } else {
+          let i = 0;
+          let prev = null;
+          let current = this.head;
+          while (i++ < position) {
+            // 跳出循环的时候，i刚好和position相同（i）
+            prev = current;
+            current = current.next;
+          }
+          prev.next = newNode;
+          newNode.next = current;
+        }
+        // 非常重要 length++
+        this.length++;
+        return true;
+      }
+
+      // get 
+      LinkedList.prototype.get = function (position) {
+        if (position < 0 || position > this.length - 1) return null;
+        let index = 0;
+        let current = this.head;
+        while (index++ < position) {
+          current = current.next;
+        }
+        return current.data;
+      }
+
+      // indexOf
+      LinkedList.prototype.indexOf = function (data) {
+        let index = 0;
+        let current = this.head;
+        // while (current && current.data !== data) {
+        //   current = current.next;
+        //   index++;
+        // }
+        // if (current) {
+        //   return index;
+        // }
+        // return -1;
+        // 或者这种，先比较后挪位置
+        while (current) {
+          if (current.data === data) {
+            // 先比较
+            return index;
+          }
+          // 向下挪个位置
+          current = current.next;
+          index++;
+        }
+        return -1;
+      }
+
+      // update
+      LinkedList.prototype.update = function (position, data) {
+        if (position < 0 || position > this.length - 1) return false;
+        const newNode = new Node(data);
+        let index = 0;
+        let current = this.head;
+        while (index++ < position) {
+          current = current.next;
+        }
+        current.data = data;
+        return true;
+      }
+
+      // removeAt
+      LinkedList.prototype.removeAt = function (position) {
+        // position >= this.length *** 重要
+        if (position < 0 || position >= this.length) return false;
+        if (position === 0) {
+          this.head = this.head.next;
+        } else {
+          let index = 0;
+          let prev = null;
+          let current = this.head;
+          while (index++ < position) {
+            prev = current;
+            current = current.next;
+          }
+          prev.next = current.next;
+        }
+        // this.length -- *** 重要
+        this.length--;
+        return true;
+      }
+
+      // remove
+      LinkedList.prototype.remove = function (data) {
+        const index = this.indexOf(data);
+        // if (index !== -1) {
+        //   this.removeAt(index);
+        //   return true;
+        // }
+        // 这种写法妙， removeAt 中 包括了this.length --;
+        return this.removeAt(index);;
+      }
+
+      LinkedList.prototype.isEmpty = function () {
+        return this.length === 0;
+      }
+      LinkedList.prototype.size = function () {
+        return this.length;
+      }
+    }
+    const list = new LinkedList();
+    list.append(1);
+    list.append(2);
+    list.append(3);
+    list.append(4);
+    list.insert(0, 0)
+    console.log('list', list);
+    console.log('list.toString()', list.toString());
+    console.log('list.get(4)', list.get(
+      4));
+    console.log('list.indexOf(4)', list.indexOf(4));
+    list.update(3, '333');
+    console.log('list.toString()', list
+      .toString());
+    list.removeAt(0);
+    list.removeAt(2);
+    console.log('list.toString()', list
+      .toString());
+
+    list.remove(4);
+    console.log('list.toString()', list
+      .toString());
+    console.log(list.isEmpty());
+    console.log(list.size());
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    p {
+      text-indent: 2rem;
+      line-height: 48px;
+      border-bottom: 1px dashed #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>队列的分类</h3>
+  <p>1.普通队列（普通的队列插入元素，会插入这个队列的后端，等待其他的元素处理完，才可以处理它）</p>
+  <p>2.优先级队列（插入元素的同时，会根据该元素的优先级，去查找该元素的正确位置，然后插入它， 优先级队列的优先级用priority表示，priority越小表示优先级越高）</p>
+  <h3>队列的特点：</h3>
+  <p>1.队列是一种受限的线性结构</p>
+  <p>2.先进先出（FIFO）</p>
+
+  <h3>队列相关概念：</h3>
+  <p>前端（front）</p>
+  <p>后端（rear）</p>
+
+  <h3>队列的应用：</h3>
+  <p>打印文档</p>
+  <p>头等舱，商务舱登记的顺序（优先级的队列）</p>
+  <p>急症科（优先级队列）</p>
+
+  <h3>队列的实现</h3>
+  <p>1.利用数组</p>
+  <p>2.利用链表</p>
+  <script>
+    function Queue() {
+      this.items = [];
+    }
+
+    Queue.prototype = {
+      enqueue(element) {
+        // 向队列后端添加元素
+        this.items.push(element)
+      },
+      dequeue() {
+        // 删除队列前端元素
+        return this.items.shift();
+      },
+      front() {
+        // 返回第一个元素
+        return this.items[0];
+      },
+      size() {
+        return this.items.length;
+      },
+      isEmpty() {
+        return this.items.length === 0;
+      },
+      toString() {
+        let str = '';
+        const len = this.size();
+        for (let i = 0; i < len; i++) {
+          if (!i) {
+            str += '';
+          } else {
+            str += ',' + this.items[i];
+          }
+        }
+        return str;
+      }
+    }
+
+    const queue = new Queue();
+    queue.enqueue(1)
+    queue.enqueue(2)
+    queue.enqueue(3)
+    console.log('front', queue.front());
+    console.log('size', queue.size());
+    console.log('dequeue', queue.dequeue());
+    console.log('front', queue.front());
+    console.log('size', queue.toString());
+
+    // 面试题： 击鼓传花
+    function passGame(nameList, num) {
+      const queue = new Queue();
+      // 将所有人依次加入队列
+      nameList.forEach(name => {
+        queue.enqueue(name);
+      });
+      // 不是num的时候，将元素添加到队列的末尾，是num的时候，将其删除
+      while (queue.size() > 1) {
+        // 将 从 0 到 num - 1 的位置中的 num - 1个人 添加到队列的后端，然后删除队列前端的那个人，依次；
+        for (let i = 0; i < num - 1; i++) {
+          queue.enqueue(queue.dequeue())
+        }
+        queue.dequeue();
+      }
+
+      const endName = queue.front();
+      return nameList.indexOf(endName);
+    }
+    const arr = [1, 2, 3, 4, 5]
+
+    console.log(passGame(arr, 2))
+  </script>
+</body>
+
+</html>

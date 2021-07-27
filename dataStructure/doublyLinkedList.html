@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    p {
+      text-indent: 2rem;
+      line-height: 48px;
+      border-bottom: 1px dashed #ccc;
+    }
+  </style>
+
+</head>
+
+<body>
+  <h3>单项链表</h3>
+  <p>1.只能从头遍历到尾或者从尾部遍历到头部，链表相连的过程是单项的</p>
+  <p>2.实现原理是上一个节点中有指向下一个节点的引用</p>
+
+  <h3>单项链表的缺点</h3>
+  <p>1.可以轻松的到达下一个节点，但是却很难回到前一个节点（可以从头开始再遍历一边），实际开发中回到上一个节点的场景狠多（例如文本编辑器的实现，每一行对应一个节点，光标在每个节点的前后可以自由切换）</p>
+
+  <h3>认识双向链表：</h3>
+  <p>1.双向链表可以从头部遍历到尾部，也可以从尾部遍历到头部，链表节点的相连的过程是双向的</p>
+  <p>2.这就说明，一个节点内部有指向前一个节点的引用，也有指向后一个节点的引用</p>
+
+  <h3>双向链表的缺点</h3>
+  <p>每次在插入或者删除元素的时候需要处理4个引用， 而不是2个，实现起来会困难一点</p>
+  <p>在内存中占用的空间会更多</p>
+
+  <script>
+    function DoublyLinkedList() {
+      function Node(data) {
+        this.data = data;
+        this.prev = null;
+        this.next = null;
+      }
+      this.head = null;
+      this.tail = null;
+      this.length = 0;
+
+      // append
+      DoublyLinkedList.prototype.append = function (data) {
+        const newNode = new Node(data);
+        if (this.length === 0) {
+          this.head = newNode;
+          this.tail = newNode;
+        } else {
+          this.tail.next = newNode;
+          newNode.prev = this.tail;
+          this.tail = newNode;
+        }
+        this.length++;
+      }
+
+      // toString
+      DoublyLinkedList.prototype.toString = function () {
+        return this.backwardString();
+      }
+      // 向前遍历 forwardString
+      DoublyLinkedList.prototype.forwardString = function () {
+        let resStr = '';
+        let current = this.tail;
+        while (current) {
+          resStr += current.data + ' ';
+          current = current.prev;
+        }
+        return resStr;
+      }
+      // 向后遍历 backwardString
+      DoublyLinkedList.prototype.backwardString = function () {
+        let resStr = '';
+        let current = this.head;
+        while (current) {
+          resStr += current.data + ' ';
+          current = current.next;
+        }
+        return resStr;
+      }
+      // insert
+      DoublyLinkedList.prototype.insert = function (position, data) {
+        if (position < 0 || position > this.length) return false;
+        const newNode = new Node(data);
+        if (this.length === 0) {
+          // 插入的链表为空
+          this.head = newNode;
+          this.tail = newNode;
+        } else {
+          if (position === 0) {
+            // 插入开头
+            this.head.prev = newNode;
+            newNode.next = this.head;
+            this.head = newNode;
+          } else if (position === this.length) {
+            // 插入结尾
+            this.tail.next = newNode;
+            newNode.prev = this.tail;
+            // 把尾部引用更换
+            this.tail = newNode;
+          } else {
+            // 插入中间位置,双向链表，不需要定义prev变量
+            let index = 0;
+            let current = this.head;
+            while (index++ < position) {
+              current = current.next;
+            }
+            // 先明确新节点的 前后引用的指向
+            newNode.prev = current.prev;
+            newNode.next = current;
+            // 注意下面两行代码的顺序不能换
+            current.prev.next = newNode;
+            current.prev = newNode;
+          }
+          this.length++;
+        }
+      }
+      // get
+      DoublyLinkedList.prototype.get = function (position) {
+        if (position < 0 || position > this.length - 1) return null;
+        // 二分遍历   
+        const fromHeadFlag = this.length / 2 > position
+
+        if (fromHeadFlag) {
+          // 1.this.length / 2 > position 从前往后遍历 
+          let index = 0;
+          let current = this.head;
+          while (index++ < position) {
+            current = current.next;
+          }
+          return current.data;
+        } else {
+          // 2.this.length / 2 < position 从后往前遍历
+          let index = this.length - 1;
+          let current = this.tail;
+          while (index-- > position) {
+            current = current.prev;
+          }
+          return current.data;
+        }
+      }
+
+      // indexOf
+      DoublyLinkedList.prototype.indexOf = function (data) {
+        let current = this.head;
+        let index = 0;
+        while (current) {
+          if (current.data === data) {
+            return index;
+          }
+          current = current.next;
+          index++;
+        }
+        return -1;
+      }
+
+      // update
+      DoublyLinkedList.prototype.update = function (position, data) {
+        if (position < 0 || position > this.length - 1) return false;
+        let index = 0;
+        let current = this.head;
+        while (index++ < position) {
+          current = current.next;
+        }
+        current.data = data;
+        return true;
+      }
+
+      // removeAt 与插入insert比较类似
+      DoublyLinkedList.prototype.removeAt = function (position) {
+        if (position < 0 || position > this.length - 1) return null;
+        let current = this.head;
+        if (this.length === 1) { // 删除是第一个节点
+          // 只有一个节点(移除就是移除引用指向，没有引用的节点，会自动被系统回收)
+          this.head = null;
+          this.tail = null;
+        } else {
+          if (position === 0) { // 删除的是第一个节点
+            // 移除第一个节点
+            this.head.next.prev = null; // 非常重要，去除对第一个节点的引用
+            this.head = this.head.next;
+          } else if (position === this.length - 1) { // 删除的是最后的节点
+            // 移除最后一个节点
+            current = this.tail;
+            this.tail.prev.next = null; // 同理，去除对第最后一个节点的引用
+            this.tail = this.tail.prev;
+          } else { // 删除的是找出来的那个current;
+            let index = 0;
+            while (index++ < position) {
+              current = current.next;
+            }
+            current.prev.next = current.next;
+            current.next.prev = current.prev;
+          }
+        }
+        this.length--;
+        return current.data;
+      }
+
+      // remove
+      DoublyLinkedList.prototype.remove = function (data) {
+        const index = this.indexOf(data);
+        return this.removeAt(index);
+      }
+    }
+    const list = new DoublyLinkedList();
+    list.append('abc')
+    list.append('acb')
+    list.append('cba')
+    list.insert(0, 'aaa')
+    list.insert(3, 'bbb')
+    list.insert(5, 'ccc')
+    console.log('list.toString', list.toString());
+    console.log('list.forwardString', list.forwardString());
+    console.log('list.backwordString', list.backwardString());
+    console.log('list.get(0)', list.get(0));
+    console.log('list.get(1)', list.get(1));
+    console.log('list.get(5)', list.get(5));
+    console.log('list.indexOf(aaa)', list.indexOf('aaa'));
+    console.log('list.get(bbb)', list.indexOf('bbb'));
+    console.log('list.get(ccc)', list.indexOf('ccc'));
+    console.log('list.update(0)', list.update(0, 'mmm'));
+    console.log('list.update(1)', list.update(1, 'abcd'));
+    console.log('list.update(5)', list.update(5, 'hhh'));
+    console.log('list.toString', list.toString());
+    list.removeAt(0)
+    list.removeAt(4)
+    list.removeAt(2)
+    console.log(list.toString());
+    console.log(list.remove('abcd'));
+    console.log(list.toString());
+  </script>
+</body>
+
+</html>
